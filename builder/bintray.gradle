@@ -1,0 +1,115 @@
+ext{
+    bintrayRepo = 'ACD'
+    bintrayName = 'builder'
+
+    publishedGroupId = 'wang.leal.acd'
+    artifact = 'builder'
+    libraryVersion = '0.0.2'
+
+    libraryName = 'builder'
+    libraryDescription = 'Android Component Development.'
+    siteUrl = 'https://github.com/wangleal/ACD'
+    gitUrl = 'https://github.com/wangleal/ACD.git'
+
+    developerId = 'wangleal'
+    developerName = 'wangleal'
+    developerEmail = 'wangleal.oss@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    licenseDistribution = 'repo'
+    allLicenses = ["Apache-2.0"]
+}
+
+//publish
+apply plugin: 'maven-publish'
+
+group = publishedGroupId                               // Maven Group ID for the artifact
+version = libraryVersion
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task docJar(type: Jar, dependsOn: [javadoc, groovydoc]) {
+    classifier 'doc'
+    from javadoc.destinationDir, groovydoc.destinationDir
+}
+
+artifacts {
+    archives docJar
+    archives sourcesJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name licenseName
+            url licenseUrl
+            distribution licenseDistribution
+        }
+    }
+    developers {
+        developer {
+            id developerId
+            name developerName
+            email developerEmail
+        }
+    }
+    scm {
+        connection gitUrl
+        developerConnection gitUrl
+        url siteUrl
+    }
+}
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact docJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description',libraryDescription)
+                root.appendNode('name',libraryName)
+                root.appendNode('url',siteUrl)
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+//upload
+apply plugin: 'com.jfrog.bintray'
+
+// Bintray
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    publications = ['plugin']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = properties.getProperty("bintray.gpg.password")
+                //Optional. The passphrase for GPG signing'
+            }
+        }
+    }
+}

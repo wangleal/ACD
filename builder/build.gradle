@@ -1,0 +1,9 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'groovy'
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+}
+
+apply from: 'bintray.gradle'
