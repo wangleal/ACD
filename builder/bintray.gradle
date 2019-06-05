@@ -4,7 +4,7 @@ ext{
 
     publishedGroupId = 'wang.leal.acd'
     artifact = 'builder'
-    libraryVersion = '0.0.2'
+    libraryVersion = '0.0.5'
 
     libraryName = 'builder'
     libraryDescription = 'Android Component Development.'
@@ -24,7 +24,7 @@ ext{
 //publish
 apply plugin: 'maven-publish'
 
-group = publishedGroupId                               // Maven Group ID for the artifact
+group = publishedGroupId
 version = libraryVersion
 
 task sourcesJar(type: Jar) {
