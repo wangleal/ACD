@@ -4,7 +4,7 @@ ext{
 
     publishedGroupId = 'wang.leal.acd'
     artifact = 'builder'
-    libraryVersion = '0.0.5'
+    libraryVersion = '0.0.6'
 
     libraryName = 'builder'
     libraryDescription = 'Android Component Development.'
@@ -80,8 +80,13 @@ publishing {
             }
         }
     }
-}
 
+    repositories {
+        maven {
+            url = "E:\\Android\\repos"
+        }
+    }
+}
 //upload
 apply plugin: 'com.jfrog.bintray'
 
