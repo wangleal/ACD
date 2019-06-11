@@ -8,12 +8,12 @@ import org.gradle.api.Project;
 public abstract class LogPlugin extends Transform implements Plugin<Project>{
     @Override
     public void apply(Project project) {
-        Object[] containers = createContainers(project);
-        project.getExtensions().create("log",LogExtension.class,containers);
+        System.out.println("apply.......................................");
+        project.getExtensions().create("log",LogExtension.class,project);
         AppExtension android = project.getExtensions().getByType(AppExtension.class);
         android.registerTransform(this);
+        project.getBuildDir().deleteOnExit();
+        project.getRootProject().getBuildDir().deleteOnExit();
     }
-
-    public abstract Object[] createContainers(Project project);
 
 }

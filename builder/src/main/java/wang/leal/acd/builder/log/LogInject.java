@@ -18,13 +18,15 @@ public class LogInject {
     private static ClassPool pool = ClassPool.getDefault();
 
     public static void injectLog(String path, Project project) {
-        AppExtension android = project.getExtensions().getByType(AppExtension.class);
-        String packageName = android.getDefaultConfig().getApplicationId();
+        AppExtension appExtension = project.getExtensions().getByType(AppExtension.class);
+        String packageName = appExtension.getDefaultConfig().getApplicationId();
+
+        LogExtension logExtension = project.getExtensions().getByType(LogExtension.class);
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream(project.getRootProject().file("local.properties")));
             String sdkDir = properties.getProperty("sdk.dir");
-            String androidClassPath = sdkDir+"\\platforms\\android-28\\android.jar";
+            String androidClassPath = sdkDir+"\\platforms\\"+appExtension.getCompileSdkVersion()+"\\android.jar";
             System.out.println("Android class path:"+androidClassPath);
             pool.appendClassPath(androidClassPath);
             pool.appendClassPath(path);
@@ -57,7 +59,8 @@ public class LogInject {
                                 }
                                 pool.importPackage("android.util");
                                 CtMethod[] methods = c.getDeclaredMethods();
-                                if (methods!=null&&methods.length>0){
+                                System.out.println("enable:"+logExtension.getMethod().isEnable());
+                                if (methods!=null&&methods.length>0&&logExtension.getMethod().isEnable()){
                                     for (CtMethod method:methods){
                                         method.insertBefore("Log.e(\""+file.getName().substring(0,file.getName().length()-6)+"\",\""+method.getLongName()+"\");");
                                     }

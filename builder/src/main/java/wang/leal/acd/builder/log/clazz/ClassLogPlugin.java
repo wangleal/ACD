@@ -10,13 +10,13 @@ import wang.leal.acd.builder.log.LogPlugin;
 
 class ClassLogPlugin extends LogPlugin{
     @Override
-    public Object[] createContainers(Project project) {
-        return new Object[0];
+    public void apply(Project project) {
+        super.apply(project);
     }
 
     @Override
     public String getName() {
-        return "TransformClassesWithPreDexForClassLog";
+        return "ClazzLog";
     }
 
     @Override

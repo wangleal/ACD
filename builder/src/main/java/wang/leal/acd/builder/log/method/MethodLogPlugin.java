@@ -21,11 +21,11 @@ import wang.leal.acd.builder.log.LogPlugin;
 
 class MethodLogPlugin extends LogPlugin {
     private Project project;
+
     @Override
-    public Object[] createContainers(Project project) {
+    public void apply(Project project) {
+        super.apply(project);
         this.project = project;
-        Method method = new Method();
-        return new Object[]{method};
     }
 
     @Override
@@ -50,13 +50,11 @@ class MethodLogPlugin extends LogPlugin {
 
     @Override
     public void transform(TransformInvocation transformInvocation) {
+        System.out.println("transform.......................................");
         Collection<TransformInput> inputs = transformInvocation.getInputs();
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider();
         inputs.forEach(
                 transformInput -> {
-                    transformInput.getDirectoryInputs().forEach(directoryInput -> {
-                        System.out.println("input :"+directoryInput.getFile().getAbsolutePath());
-                    });
                     transformInput.getDirectoryInputs().forEach(directoryInput -> {
                         LogInject.injectLog(directoryInput.getFile().getAbsolutePath(), project);
                         File dest = outputProvider.getContentLocation(directoryInput.getName(),
